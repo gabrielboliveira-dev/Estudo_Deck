@@ -24,6 +24,7 @@ public class Deck {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("O nome do baralho é obrigatório.");
         }
+
         return new Deck(name);
     }
 
@@ -44,5 +45,17 @@ public class Deck {
 
     public List<Flashcard> getCards() {
         return Collections.unmodifiableList(cards);
+    }
+
+    public static Deck restore(UUID id, String name, List<Flashcard> cards) {
+        Deck d = new Deck(name);
+
+        return new Deck(id, name, cards);
+    }
+
+    private Deck(UUID id, String name, List<Flashcard> cards) {
+        this.id = id;
+        this.name = name;
+        this.cards = new ArrayList<>(cards);
     }
 }

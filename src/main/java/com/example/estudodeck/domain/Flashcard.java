@@ -71,4 +71,34 @@ public class Flashcard {
             easinessFactor = 1.3;
         }
     }
+
+    public static Flashcard restore(UUID id,
+                                    String question,
+                                    String answer,
+                                    int repetitions,
+                                    double easinessFactor,
+                                    int intervalInDays,
+                                    LocalDateTime nextDueDate) {
+
+        Flashcard f = new Flashcard(question, answer);
+
+        return new Flashcard(
+                id,
+                question,
+                answer,
+                repetitions,
+                easinessFactor,
+                intervalInDays,
+                nextDueDate);
+    }
+
+    private Flashcard(UUID id, String question, String answer, int repetitions, double easinessFactor, int intervalInDays, LocalDateTime nextDueDate) {
+        this.id = id;
+        this.question = question;
+        this.answer = answer;
+        this.repetitions = repetitions;
+        this.easinessFactor = easinessFactor;
+        this.intervalInDays = intervalInDays;
+        this.nextDueDate = nextDueDate;
+    }
 }
