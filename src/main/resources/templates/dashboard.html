@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard de Atividades</title>
+    <style>
+        .heatmap { display: flex; flex-wrap: wrap; width: 800px; }
+        .day { width: 20px; height: 20px; border: 1px solid #eee; margin: 1px; }
+        .day-tip { position: relative; }
+        .day-tip .tooltip-text { visibility: hidden; width: 120px; background-color: black; color: #fff; text-align: center; border-radius: 6px; padding: 5px 0; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -60px; }
+        .day-tip:hover .tooltip-text { visibility: visible; }
+        .level-0 { background-color: #ebedf0; }
+        .level-1 { background-color: #9be9a8; }
+        .level-2 { background-color: #40c463; }
+        .level-3 { background-color: #30a14e; }
+        .level-4 { background-color: #216e39; }
+        .streak { text-align: center; font-size: 24px; margin-bottom: 20px; }
+        .profile-header { display: flex; align-items: center; justify-content: space-around; margin-bottom: 20px; }
+        .xp-bar { width: 100%; background-color: #e0e0e0; border-radius: 5px; }
+        .xp-bar-fill { height: 20px; background-color: #4caf50; border-radius: 5px; text-align: center; color: white; line-height: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Dashboard de Atividades</h1>
+    <a href="/decks">&larr; Voltar para a lista de baralhos</a>
+    <hr>
+
+    <div class="profile-header">
+        <div>
+            <h2>Nível <span th:text="${user.level}"></span></h2>
+            <div class="xp-bar">
+                <div class="xp-bar-fill" th:style="'width:' + (${user.xp} * 100 / ${xpForNextLevel}) + '%;'" th:text="${user.xp} + ' / ' + ${xpForNextLevel} + ' XP'"></div>
+            </div>
+        </div>
+        <div class="streak">
+            <span th:if="${streak.currentStreakDays > 0}">
+                🔥 <strong><span th:text="${streak.currentStreakDays}"></span></strong> dias de ofensiva!
+            </span>
+            <span th:if="${streak.currentStreakDays == 0}">
+                Comece a estudar hoje!
+            </span>
+        </div>
+    </div>
+
+    <div style="display: flex;">
+        <div style="flex: 3; padding-right: 20px;">
+            <h2>Heatmap de Revisões (Último Ano)</h2>
+            <div class="heatmap">
+                <div th:each="day : ${heatmapDays}" class="day day-tip" th:classappend="${'level-' + day.level}">
+                    <span class="tooltip-text" th:text="${day.date + ': ' + day.count + ' revisões'}"></span>
+                </div>
+            </div>
+        </div>
+        <div style="flex: 1;">
+            <h2>Estatísticas de Retenção</h2>
+            <div th:if="${stats != null}">
+                <p>
+                    <strong>Cartões Jovens:</strong>
+                    <span th:text="${#numbers.formatDecimal(stats.youngCardRetention, 1, 2)}"></span>% de acerto
+                </p>
+                <p>
+                    <strong>Cartões Maduros:</strong>
+                    <span th:text="${#numbers.formatDecimal(stats.matureCardRetention, 1, 2)}"></span>% de acerto
+                </p>
+            </div>
+            <div th:if="${stats == null or (stats.youngCardRetention == 0 and stats.matureCardRetention == 0)}">
+                <p>Nenhuma estatística de revisão disponível ainda. Comece a estudar!</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

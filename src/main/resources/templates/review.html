@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Revisão</title>
+    <script>
+        function showAnswer() {
+            document.getElementById('prompt').style.display = 'none';
+            document.getElementById('full-content').style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+    <a th:href="@{/decks/{id}(id=${deck.id})}">&larr; Voltar ao baralho</a>
+    <h1 th:text="${deck.name}"></h1>
+
+    <div th:if="${card != null}">
+        <div id="prompt">
+            <h2 th:text="${card.content.prompt}"></h2>
+            <button onclick="showAnswer()">Mostrar Resposta</button>
+        </div>
+
+        <div id="full-content" style="display:none;">
+            <h2 th:text="${card.content.fullContent}"></h2>
+            <p>Qual a dificuldade?</p>
+            <form th:action="@{/decks/{deckId}/review/{flashcardId}(deckId=${deck.id}, flashcardId=${card.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="quality" value="0"><button type="submit">Errei Feio</button>
+            </form>
+            <form th:action="@{/decks/{deckId}/review/{flashcardId}(deckId=${deck.id}, flashcardId=${card.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="quality" value="3"><button type="submit">Difícil</button>
+            </form>
+            <form th:action="@{/decks/{deckId}/review/{flashcardId}(deckId=${deck.id}, flashcardId=${card.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="quality" value="4"><button type="submit">Bom</button>
+            </form>
+            <form th:action="@{/decks/{deckId}/review/{flashcardId}(deckId=${deck.id}, flashcardId=${card.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="quality" value="5"><button type="submit">Fácil</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${card == null}">
+        <h2>Parabéns!</h2>
+        <p>Você não tem mais cartões para revisar neste baralho por hoje.</p>
+    </div>
+</body>
+</html>

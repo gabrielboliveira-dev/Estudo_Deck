@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Baralho</title>
+</head>
+<body>
+    <h1>Novo Baralho</h1>
+    <form action="/decks" method="post">
+        <div>
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="parentId">Baralho Pai (Opcional):</label>
+            <select id="parentId" name="parentId">
+                <option value="">Nenhum (Baralho Principal)</option>
+                <option th:each="deck : ${allDecks}"
+                        th:value="${deck.id}"
+                        th:text="${deck.name}"></option>
+            </select>
+        </div>
+        <button type="submit">Criar</button>
+    </form>
+</body>
+</html>

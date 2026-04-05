@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sessão Rápida: <span th:text="${deckName}"></span></title>
+    <script>
+        function showAnswer() {
+            document.getElementById('prompt').style.display = 'none';
+            document.getElementById('full-content').style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+    <h1>Sessão Rápida: <span th:text="${deckName}"></span></h1>
+
+    <div th:if="${card != null}">
+        <div id="prompt">
+            <h2 th:text="${card.content.prompt}"></h2>
+            <button onclick="showAnswer()">Mostrar Resposta</button>
+        </div>
+
+        <div id="full-content" style="display:none;">
+            <h2 th:text="${card.content.fullContent}"></h2>
+            <form th:action="@{/cram/next}" method="post">
+                <button type="submit">Próximo Cartão</button>
+            </form>
+        </div>
+    </div>
+
+    <form th:action="@{/cram/end}" method="post" style="margin-top: 20px;">
+        <button type="submit">Encerrar Sessão</button>
+    </form>
+</body>
+</html>

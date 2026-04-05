@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${deck.name}"></title>
+    <style>
+        .tag { background-color: #e0e0e0; padding: 2px 6px; border-radius: 4px; margin-right: 4px; }
+        .tag-form { display: inline-block; }
+        .tag-form button { background: none; border: 1px solid red; color: red; border-radius: 50%; cursor: pointer; font-size: 10px; line-height: 1; padding: 2px 4px; }
+        .message { padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; }
+    </style>
+    <script>
+        function showForm(type) {
+            document.getElementById('basic-form').style.display = type === 'basic' ? 'block' : 'none';
+            document.getElementById('cloze-form').style.display = type === 'cloze' ? 'block' : 'none';
+        }
+    </script>
+</head>
+<body>
+    <a href="/decks">&larr; Voltar para todos os baralhos</a>
+    <h1 th:text="${deck.name}"></h1>
+    <div th:if="${message}" th:text="${message}" class="message"></div>
+    <div>
+        <span th:each="tag : ${deck.tags}" class="tag">
+            <span th:text="${tag.name}"></span>
+            <form th:action="@{/decks/{deckId}/tags/delete(deckId=${deck.id})}" method="post" class="tag-form">
+                <input type="hidden" name="tagName" th:value="${tag.name}">
+                <button type="submit">x</button>
+            </form>
+        </span>
+    </div>
+    <form th:action="@{/decks/{deckId}/tags(deckId=${deck.id})}" method="post" style="margin-top: 10px;">
+        <input type="text" name="tagName" placeholder="Adicionar tag..." required>
+        <button type="submit">Adicionar Tag</button>
+    </form>
+
+    <hr>
+    <a th:href="@{/decks/{id}/review(id=${deck.id})}">Revisão Inteligente (SM-2)</a>
+    <form th:action="@{/cram/start/{deckId}(deckId=${deck.id})}" method="post" style="display: inline; margin-left: 20px;">
+        <button type="submit">Sessão Rápida (Cram)</button>
+    </form>
+    <a th:href="@{/decks/{id}/export(id=${deck.id})}" style="margin-left: 20px;">Exportar para CSV</a>
+    <form th:if="${!deck.isPublic()}" th:action="@{/decks/{id}/publish(id=${deck.id})}" method="post" style="display: inline; margin-left: 20px;">
+        <button type="submit">Publicar no Marketplace</button>
+    </form>
+    <span th:if="${deck.isPublic()}" style="margin-left: 20px; color: green; font-weight: bold;">✓ Publicado</span>
+    <hr>
+
+    <div>
+        <div style="float: left; width: 50%;">
+            <h2>Flashcards</h2>
+            <ul>
+                <li th:each="card : ${deck.cards}">
+                    <span th:text="${card.content.prompt}"></span>
+                    <span th:if="${card.isSuspended()}" style="color: red; font-weight: bold;">[SUSPENSO]</span>
+                    <form th:action="@{/decks/{deckId}/flashcards/{flashcardId}/delete(deckId=${deck.id}, flashcardId=${card.id})}" method="post" style="display:inline;">
+                        <button type="submit">Excluir</button>
+                    </form>
+                    <form th:if="${card.isSuspended()}" th:action="@{/decks/{deckId}/flashcards/{flashcardId}/unsuspend(deckId=${deck.id}, flashcardId=${card.id})}" method="post" style="display:inline;">
+                        <button type="submit">Reativar</button>
+                    </form>
+                </li>
+            </ul>
+
+            <h2>Novo Flashcard</h2>
+            <div>
+                <label>Tipo de Cartão:</label>
+                <button onclick="showForm('basic')">Básico</button>
+                <button onclick="showForm('cloze')">Omissão de Palavras (Cloze)</button>
+            </div>
+
+            <form id="basic-form" th:action="@{/decks/{id}/flashcards(id=${deck.id})}" method="post" style="display:none;">
+                <input type="hidden" name="type" value="BASIC">
+                <h3>Cartão Básico</h3>
+                <label for="question">Pergunta:</label><br>
+                <input type="text" id="question" name="question" required><br>
+                <label for="answer">Resposta:</label><br>
+                <input type="text" id="answer" name="answer" required><br>
+                <button type="submit">Criar Cartão Básico</button>
+            </form>
+
+            <form id="cloze-form" th:action="@{/decks/{id}/flashcards(id=${deck.id})}" method="post" style="display:none;">
+                <input type="hidden" name="type" value="CLOZE">
+                <h3>Cartão de Omissão (Cloze)</h3>
+                <label for="text">Texto (use {{c1::texto a omitir}}):</label><br>
+                <textarea id="text" name="text" rows="3" cols="40" required></textarea><br>
+                <button type="submit">Criar Cartão Cloze</button>
+            </form>
+
+            <hr>
+            <h2>Importar de CSV</h2>
+            <form th:action="@{/decks/{id}/import(id=${deck.id})}" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".csv" required>
+                <button type="submit">Importar</button>
+            </form>
+        </div>
+
+        <div style="float: right; width: 45%;">
+            <h2>Previsão de Revisões (Próximos 30 dias)</h2>
+            <ul th:if="${not #lists.isEmpty(forecast)}">
+                <li th:each="item : ${forecast}">
+                    <span th:text="${#temporals.format(item.date, 'dd/MM/yyyy')}"></span>:
+                    <span th:text="${item.cardCount}"></span> cartões
+                </li>
+            </ul>
+            <p th:if="${#lists.isEmpty(forecast)}">Nenhum cartão agendado para os próximos 30 dias.</p>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados da Busca</title>
+</head>
+<body>
+    <h1>Resultados da Busca por: "<span th:text="${query}"></span>"</h1>
+    <a href="/decks">&larr; Voltar para a lista de baralhos</a>
+
+    <div th:if="${#lists.isEmpty(results)}">
+        <p>Nenhum cartão encontrado.</p>
+    </div>
+
+    <ul th:if="${not #lists.isEmpty(results)}">
+        <li th:each="result : ${results}">
+            <p>
+                <strong>Cartão:</strong> <span th:text="${result.prompt}"></span>
+            </p>
+            <p>
+                <em>No baralho:</em> <a th:href="@{/decks/{id}(id=${result.deckId})}" th:text="${result.deckName}"></a>
+            </p>
+            <hr>
+        </li>
+    </ul>
+</body>
+</html>

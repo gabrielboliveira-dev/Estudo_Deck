@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Estudo Deck</title>
+</head>
+<body>
+    <h1>Meus Baralhos</h1>
+    <a href="/decks/new">Criar Novo Baralho</a>
+    <a href="/dashboard" style="margin-left: 20px;">Dashboard</a>
+    <a href="/marketplace" style="margin-left: 20px;">Marketplace</a>
+
+    <hr>
+    <form action="/search" method="get">
+        <input type="search" name="query" placeholder="Buscar em todos os cartões..." required>
+        <button type="submit">Buscar</button>
+    </form>
+    <hr>
+
+    <!-- Fragmento Recursivo para a Árvore de Baralhos -->
+    <div th:fragment="deckTree(decks)">
+        <ul th:if="${not #lists.isEmpty(decks)}">
+            <li th:each="deck : ${decks}">
+                <a th:href="@{/decks/{id}(id=${deck.id})}" th:text="${deck.name}"></a>
+                <form th:action="@{/decks/{id}/delete(id=${deck.id})}" method="post" style="display:inline;">
+                    <button type="submit">Excluir</button>
+                </form>
+                <!-- Chamada Recursiva -->
+                <div th:replace="~{index :: deckTree(decks=${deck.children})}"></div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Ponto de Entrada Inicial -->
+    <div th:replace="~{index :: deckTree(decks=${deckTree})}"></div>
+
+</body>
+</html>

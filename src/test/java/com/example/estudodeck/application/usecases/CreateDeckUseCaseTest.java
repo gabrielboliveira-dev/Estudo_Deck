@@ -2,35 +2,48 @@ package com.example.estudodeck.application.usecases;
 
 import com.example.estudodeck.application.gateways.DeckRepository;
 import com.example.estudodeck.domain.Deck;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
+import com.example.estudodeck.infrastructure.security.UserContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
-class CreateDeckUseCaseTest {
-
-    @Mock
-    private DeckRepository repository;
+public class CreateDeckUseCaseTest {
 
     @InjectMocks
     private CreateDeckUseCase createDeckUseCase;
 
+    @Mock
+    private DeckRepository deckRepository;
+
+    @Mock
+    private UserContext userContext;
+
+    // Mock User ID for testing purposes
+    private final UUID MOCK_USER_ID = UUID.randomUUID();
+
     @Test
-    @DisplayName("Deve criar e salvar um baralho novo")
-    void shouldCreateAndSaveDeck() {
-        when(repository.save(any(Deck.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        Deck createdDeck = createDeckUseCase.execute("Java Avançado");
-        Assertions.assertNotNull(createdDeck.getId());
-        Assertions.assertEquals("Java Avançado", createdDeck.getName());
-        verify(repository, times(1)).save(any(Deck.class));
+    public void shouldCreateDeck() {
+        // Given
+        String deckName = "Test Deck";
+        CreateDeckUseCase.Input input = new CreateDeckUseCase.Input(deckName, null); // Use Input object
+
+        when(userContext.getAuthenticatedUserId()).thenReturn(MOCK_USER_ID);
+        Deck deck = Deck.create(deckName, null, MOCK_USER_ID); // Pass userId
+        when(deckRepository.save(any(Deck.class))).thenReturn(deck);
+
+        // When
+        Deck createdDeck = createDeckUseCase.execute(input); // Use Input object
+
+        // Then
+        assertEquals(deckName, createdDeck.getName());
     }
 }

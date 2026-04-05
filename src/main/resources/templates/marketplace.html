@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Marketplace de Baralhos</title>
+</head>
+<body>
+    <h1>Marketplace de Baralhos Públicos</h1>
+    <a href="/decks">&larr; Voltar para meus baralhos</a>
+    <hr>
+
+    <div th:if="${#lists.isEmpty(publicDecks)}">
+        <p>Nenhum baralho público disponível no momento.</p>
+    </div>
+
+    <ul th:if="${not #lists.isEmpty(publicDecks)}">
+        <li th:each="deck : ${publicDecks}">
+            <h3 th:text="${deck.name}"></h3>
+            <p><span th:text="${deck.cards.size()}"></span> cartões</p>
+            <div>
+                <span th:each="tag : ${deck.tags}" class="tag" th:text="${tag.name}" style="background-color: #e0e0e0; padding: 2px 6px; border-radius: 4px; margin-right: 4px;"></span>
+            </div>
+            <form th:action="@{/marketplace/clone/{deckId}(deckId=${deck.id})}" method="post" style="margin-top: 10px;">
+                <button type="submit">Clonar para minha coleção</button>
+            </form>
+            <hr>
+        </li>
+    </ul>
+</body>
+</html>
