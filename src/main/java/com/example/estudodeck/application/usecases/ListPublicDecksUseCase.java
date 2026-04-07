@@ -16,7 +16,7 @@ public class ListPublicDecksUseCase {
     }
 
     public List<Deck> execute() {
-        // This requires a new method in the repository
+
         return deckRepository.findAllPublic();
     }
 }

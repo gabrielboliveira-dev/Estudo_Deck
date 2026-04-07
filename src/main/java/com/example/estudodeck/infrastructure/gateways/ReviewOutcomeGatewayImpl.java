@@ -20,6 +20,7 @@ public class ReviewOutcomeGatewayImpl implements ReviewOutcomeGateway {
         ReviewOutcomeJpaEntity entity = new ReviewOutcomeJpaEntity();
         entity.setId(outcome.getId());
         entity.setFlashcardId(outcome.getFlashcardId());
+        entity.setUserId(outcome.getUserId());
         entity.setSuccess(outcome.isSuccess());
         entity.setMaturity(outcome.getMaturity());
         entity.setTimestamp(outcome.getTimestamp());

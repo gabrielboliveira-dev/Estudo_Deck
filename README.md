@@ -1,15 +1,5 @@
 # 🧠 Estudo Deck - Plataforma Inteligente de Repetição Espaçada
 
-*Transforme seu conhecimento em memória de longo prazo com uma arquitetura de software exemplar.*
-
-![Java](https://img.shields.io/badge/Java-17%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2.5-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14-336791?style=for-the-badge&logo=postgresql&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Arquitetura](https://img.shields.io/badge/Arquitetura-Clean%20%26%20DDD-1E90FF?style=for-the-badge)
-
----
-
 ## 📖 Sobre o Projeto
 
 O **Estudo Deck** é uma plataforma de flashcards multi-usuário, social e gamificada, projetada para otimizar o aprendizado através do algoritmo de repetição espaçada **SM-2**. O projeto nasceu com um objetivo técnico claro: implementar uma solução complexa e rica em funcionalidades sobre uma base de **Clean Architecture** e princípios de **Domain-Driven Design (DDD)**, garantindo que as regras de negócio sejam o centro desacoplado e testável da aplicação.

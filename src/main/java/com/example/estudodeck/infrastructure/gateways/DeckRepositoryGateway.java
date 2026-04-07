@@ -98,7 +98,13 @@ public class DeckRepositoryGateway implements DeckRepository {
                 return newTag;
             })
         ).collect(Collectors.toSet());
-        entity.setTags(tagEntities);
+        
+        if (entity.getTags() == null) {
+            entity.setTags(tagEntities);
+        } else {
+            entity.getTags().clear();
+            entity.getTags().addAll(tagEntities);
+        }
 
         List<FlashcardJpaEntity> cardEntities = deck.getCards().stream()
                 .map(card -> {
@@ -122,7 +128,13 @@ public class DeckRepositoryGateway implements DeckRepository {
                     return cardEntity;
                 }).collect(Collectors.toList());
 
-        entity.setCards(cardEntities);
+        if (entity.getCards() == null) {
+            entity.setCards(cardEntities);
+        } else {
+            entity.getCards().clear();
+            entity.getCards().addAll(cardEntities);
+        }
+
         return entity;
     }
 
