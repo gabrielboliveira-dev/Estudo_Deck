@@ -40,20 +40,16 @@ public class DashboardController {
     public String showDashboard(Model model) {
         UserJpaEntity user = userContext.getAuthenticatedUser();
 
-        // User Profile Data
         model.addAttribute("user", user);
         model.addAttribute("xpForNextLevel", levelingSystem.getXpForLevel(user.getLevel() + 1));
 
-        // Streak Data
         StreakDto streak = getCurrentStreakUseCase.execute();
         model.addAttribute("streak", streak);
 
-        // Heatmap Data
         HeatmapDataDto heatmapData = getHeatmapDataUseCase.execute(new GetHeatmapDataUseCase.Input(365));
         List<HeatmapDay> heatmapDays = buildHeatmapDays(heatmapData);
         model.addAttribute("heatmapDays", heatmapDays);
 
-        // Retention Stats Data
         RetentionStatsDto stats = getRetentionStatsUseCase.execute();
         model.addAttribute("stats", stats);
 
@@ -62,10 +58,11 @@ public class DashboardController {
 
     private List<HeatmapDay> buildHeatmapDays(HeatmapDataDto data) {
         List<HeatmapDay> days = new ArrayList<>();
-        LocalDate currentDate = data.getStartDate();
-        Map<LocalDate, Long> counts = data.getDailyReviewCounts();
 
-        while (!currentDate.isAfter(data.getEndDate())) {
+        LocalDate currentDate = data.startDate();
+        Map<LocalDate, Long> counts = data.dailyCounts();
+
+        while (!currentDate.isAfter(data.endDate())) {
             long count = counts.getOrDefault(currentDate, 0L);
             int level = calculateLevel(count);
             days.add(new HeatmapDay(currentDate.toString(), count, level));

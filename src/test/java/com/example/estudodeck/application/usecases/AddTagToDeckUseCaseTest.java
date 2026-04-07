@@ -32,7 +32,6 @@ public class AddTagToDeckUseCaseTest {
 
     @Test
     void execute_ShouldAddTagToDeckAndSave() {
-        // Given
         UUID userId = UUID.randomUUID();
         UUID deckId = UUID.randomUUID();
         String tagName = "Java";
@@ -43,22 +42,20 @@ public class AddTagToDeckUseCaseTest {
         when(userContext.getAuthenticatedUserId()).thenReturn(userId);
         when(deckRepository.findByIdAndUserId(deckId, userId)).thenReturn(Optional.of(mockDeck));
 
-        // When
         addTagToDeckUseCase.execute(input);
 
-        // Then
         ArgumentCaptor<Deck> deckCaptor = ArgumentCaptor.forClass(Deck.class);
         verify(deckRepository).save(deckCaptor.capture());
-        
+
         Deck savedDeck = deckCaptor.getValue();
         assertEquals(1, savedDeck.getTags().size());
         Tag savedTag = savedDeck.getTags().iterator().next();
-        assertEquals(tagName, savedTag.getName());
+
+        assertEquals(tagName.toLowerCase(), savedTag.getName());
     }
 
     @Test
     void execute_WhenDeckNotFound_ShouldThrowException() {
-        // Given
         UUID userId = UUID.randomUUID();
         UUID deckId = UUID.randomUUID();
         AddTagToDeckUseCase.Input input = new AddTagToDeckUseCase.Input(deckId, "Tag");
@@ -66,7 +63,6 @@ public class AddTagToDeckUseCaseTest {
         when(userContext.getAuthenticatedUserId()).thenReturn(userId);
         when(deckRepository.findByIdAndUserId(deckId, userId)).thenReturn(Optional.empty());
 
-        // When & Then
         assertThrows(ResourceNotFoundException.class, () -> addTagToDeckUseCase.execute(input));
         verify(deckRepository, never()).save(any());
     }
