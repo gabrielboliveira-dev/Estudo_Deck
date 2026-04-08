@@ -54,16 +54,9 @@ public class DeckFlowIntegrationTest {
         this.testUserId = user.getId();
     }
 
-    /**
-     * Testa o fluxo principal:
-     * 1. Cria um baralho.
-     * 2. Adiciona um flashcard básico a ele.
-     * 3. Verifica se o flashcard foi adicionado.
-     */
     @Test
     @WithMockUser(username = TEST_USER_EMAIL)
     void shouldCreateDeckAndAddBasicFlashcard() throws Exception {
-        // 1. Criar um baralho
         String deckName = "Java Concurrency";
         MvcResult createDeckResult = mockMvc.perform(post("/api/decks")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -76,7 +69,6 @@ public class DeckFlowIntegrationTest {
         String responseBody = createDeckResult.getResponse().getContentAsString();
         UUID deckId = UUID.fromString(objectMapper.readTree(responseBody).get("id").asText());
 
-        // 2. Adicionar um flashcard
         Map<String, String> contentFields = Map.of("question", "What is a Semaphore?", "answer", "A synchronization aid.");
         Map<String, Object> flashcardRequest = Map.of("type", "BASIC", "contentFields", contentFields);
 
@@ -88,16 +80,9 @@ public class DeckFlowIntegrationTest {
                 .andExpect(jsonPath("$.content.prompt").value("What is a Semaphore?"));
     }
 
-    /**
-     * Testa a revisão de um flashcard:
-     * 1. Cria um baralho e um flashcard.
-     * 2. Realiza uma revisão (envia uma nota de qualidade).
-     * 3. O endpoint deve retornar sucesso.
-     */
     @Test
     @WithMockUser(username = TEST_USER_EMAIL)
     void shouldReviewFlashcard() throws Exception {
-        // Setup: Criar deck e flashcard
         MvcResult deckResult = mockMvc.perform(post("/api/decks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\": \"History\", \"parentId\": null}")
@@ -115,7 +100,6 @@ public class DeckFlowIntegrationTest {
                 .andReturn();
         UUID flashcardId = UUID.fromString(objectMapper.readTree(cardResult.getResponse().getContentAsString()).get("id").asText());
 
-        // Teste: Processar a revisão
         mockMvc.perform(post("/api/decks/{deckId}/flashcards/{flashcardId}/review", deckId, flashcardId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"quality\": 5}")
@@ -123,16 +107,9 @@ public class DeckFlowIntegrationTest {
                 .andExpect(status().isOk());
     }
 
-    /**
-     * Testa a exclusão e o tratamento de recurso não encontrado (404).
-     * 1. Cria um baralho.
-     * 2. Deleta o baralho via API.
-     * 3. Tenta buscar a página de detalhes do baralho deletado e espera um status 404 Not Found.
-     */
     @Test
     @WithMockUser(username = TEST_USER_EMAIL)
     void shouldReturn404WhenAccessingDeletedDeck() throws Exception {
-        // Setup: Criar deck
         MvcResult deckResult = mockMvc.perform(post("/api/decks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\": \"To Be Deleted\", \"parentId\": null}")
@@ -141,12 +118,10 @@ public class DeckFlowIntegrationTest {
                 .andReturn();
         UUID deckId = UUID.fromString(objectMapper.readTree(deckResult.getResponse().getContentAsString()).get("id").asText());
 
-        // Teste: Deletar o deck
         mockMvc.perform(delete("/api/decks/{deckId}", deckId)
                 .with(csrf()))
                 .andExpect(status().isNoContent());
 
-        // Verificação: Tentar acessar a página de detalhes do deck deletado e esperar um 404.
         mockMvc.perform(get("/decks/{deckId}", deckId))
                 .andExpect(status().isNotFound());
     }

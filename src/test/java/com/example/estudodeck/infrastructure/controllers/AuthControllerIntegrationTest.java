@@ -61,7 +61,6 @@ public class AuthControllerIntegrationTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login?registered"));
 
-        // Verify user was actually saved in DB
         assertTrue(userRepository.findByEmail(testEmail).isPresent());
     }
 }
