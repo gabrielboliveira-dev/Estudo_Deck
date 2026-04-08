@@ -24,6 +24,7 @@ public class ReviewOutcomeGatewayImpl implements ReviewOutcomeGateway {
         entity.setSuccess(outcome.isSuccess());
         entity.setMaturity(outcome.getMaturity());
         entity.setTimestamp(outcome.getTimestamp());
+        entity.setUserId(outcome.getUserId());
         repository.save(entity);
     }
 }

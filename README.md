@@ -1,130 +1,81 @@
-# 🧠 Estudo Deck - Plataforma Inteligente de Repetição Espaçada
+# 🧠 Estudo Deck
 
-## 📖 Sobre o Projeto
+✨ **Plataforma Inteligente de Repetição Espaçada**
 
-O **Estudo Deck** é uma plataforma de flashcards multi-usuário, social e gamificada, projetada para otimizar o aprendizado através do algoritmo de repetição espaçada **SM-2**. O projeto nasceu com um objetivo técnico claro: implementar uma solução complexa e rica em funcionalidades sobre uma base de **Clean Architecture** e princípios de **Domain-Driven Design (DDD)**, garantindo que as regras de negócio sejam o centro desacoplado e testável da aplicação.
+---
 
-O sistema evoluiu de uma ferramenta de estudo pessoal para um ecossistema colaborativo onde usuários podem não apenas gerenciar seu próprio aprendizado, mas também compartilhar conhecimento com a comunidade.
+## 🚀 Sobre o Projeto
+
+O **Estudo Deck** é uma plataforma de flashcards projetada para otimizar o aprendizado através do algoritmo de repetição espaçada **SM-2**. O projeto nasceu com o objetivo técnico de implementar uma solução complexa sobre uma base estrita de **Clean Architecture**, **SOLID** e **Domain-Driven Design (DDD)**. Ele isola as regras complexas de memorização de qualquer dependência externa, garantindo um código altamente testável, manutenível e pronto para escalar no futuro.
 
 ---
 
 ## 🛠️ Tecnologias e Ferramentas
 
-A stack foi escolhida para garantir robustez, segurança e uma excelente experiência de desenvolvimento.
+Este projeto utiliza uma stack moderna e robusta do ecossistema Java:
 
-*   **Backend:** **Java 17** e **Spring Boot 3**: Utiliza o poder do ecossistema Spring moderno para criar uma aplicação segura, performática e de fácil manutenção.
-*   **Frontend:** **Thymeleaf (Server-Side Rendering)**: Escolhido pela simplicidade e integração perfeita com o Spring, permitindo o desenvolvimento rápido de uma interface reativa e funcional.
-*   **Persistência:** **Spring Data JPA** e **PostgreSQL**: Combina a produtividade de um ORM poderoso com a confiabilidade e os recursos avançados de um banco de dados relacional de ponta, incluindo o uso de queries nativas para **Busca Full-Text**.
-*   **Autenticação:** **Spring Security**: Implementa o padrão da indústria para segurança, gerenciando o registro, login e proteção de rotas com senhas devidamente "hasheadas" (BCrypt).
-*   **Testes:** **JUnit 5, Mockito e H2 Database**: Garante a qualidade do código com testes unitários para a lógica de domínio e testes de integração isolados que rodam em um banco de dados em memória.
-*   **Containerização:** **Docker**: Fornece um ambiente de desenvolvimento reproduzível com um único comando, eliminando problemas de configuração de ambiente.
+* **Linguagem:** Java 17
+* **Framework:** Spring Boot 3.x
+    * *Justificativa:* Framework padrão da indústria que acelera a criação de aplicações stand-alone, facilitando injeção de dependência sem poluir o domínio.
+* **Banco de Dados:** PostgreSQL
+    * *Justificativa:* Banco de dados relacional robusto, excelente para modelagens complexas e buscas estruturadas exigidas pelo sistema.
+* **Frontend / Templates:** Thymeleaf
+    * *Justificativa:* Renderização server-side com integração nativa ao Spring, permitindo construir a UI de forma fluida e direta.
+* **Persistência:** Spring Data JPA / Hibernate
+    * *Justificativa:* Abstrai o boilerplate do JDBC, facilitando o mapeamento das entidades de infraestrutura para o banco de dados.
+* **Contêineres:** Docker & Docker Compose
+    * *Justificativa:* Padroniza o ambiente de desenvolvimento, orquestrando o PostgreSQL rapidamente sem necessidade de instalações locais.
+* **Testes:** JUnit 5, Mockito
+    * *Justificativa:* Ferramentas padrão para garantir que as regras de negócio funcionem perfeitamente isoladas do framework.
+* **CI/CD:** GitHub Actions
+    * *Justificativa:* Pipeline automatizado para validação de build e testes a cada novo commit ou Pull Request.
 
 ---
 
-## 🏛️ Arquitetura
+## 🏗️ Arquitetura
 
-O projeto é estritamente organizado segundo os princípios da **Clean Architecture**, garantindo a separação de responsabilidades e a testabilidade.
+O projeto segue a **Clean Architecture**, dividindo o sistema em camadas concêntricas para garantir separação de responsabilidades, testabilidade e manutenibilidade:
 
-1.  **Domain (Core):** Contém as entidades e regras de negócio puras (ex: `Deck`, `Flashcard`, `User`, o algoritmo SM-2). Não possui nenhuma dependência de frameworks. É o coração protegido da aplicação.
-2.  **Application (Casos de Uso):** Orquestra o fluxo de dados e as regras de negócio. Define os "Use Cases" da aplicação (ex: `CreateDeckUseCase`, `ReviewFlashcardUseCase`) e as interfaces dos `Gateways` (repositórios).
-3.  **Infrastructure (Camada Externa):** Implementa os detalhes técnicos. Contém os Controllers (Web e API), as implementações dos `Gateways` usando Spring Data JPA, e as configurações de segurança e frameworks.
+1.  **Enterprise Business Rules (Domain):** Contém as entidades centrais (`Flashcard`, `Deck`) e a lógica matemática do algoritmo SM-2. Zero dependências de frameworks externos.
+2.  **Application Business Rules (Application):** Define os Casos de Uso (`CreateDeckUseCase`) e as interfaces de repositório, orquestrando a lógica de negócio.
+3.  **Interface Adapters (Infrastructure):** Implementa os gateways que traduzem os dados entre o banco de dados (JPA) e os Casos de Uso, além dos Controllers para as requisições web.
+4.  **Frameworks & Drivers:** Camada mais externa, abrangendo o Spring Boot, configurações do banco de dados e UI.
 
-A **Regra de Dependência** é rigorosamente seguida: todo o código aponta para dentro, do `Infrastructure` para o `Application`, e do `Application` para o `Domain`.
+Além disso, o projeto adere aos princípios **SOLID** e **Clean Code**, promovendo um código flexível e fácil de estender.
 
 ---
 
 ## ✨ Funcionalidades Implementadas
 
-O "Estudo Deck" é uma plataforma completa que vai muito além de um simples CRUD.
+O Estudo Deck oferece as seguintes funcionalidades principais:
 
-### 🧠 Core de Aprendizado
-- **Algoritmo SM-2**: Otimização da memorização com repetição espaçada.
-- **Tipos de Cartões**: Suporte a cartões de **Pergunta/Resposta** e de **Omissão de Palavras (Cloze)**.
-- **Gestão de "Leeches"**: Suspensão automática de cartões muito difíceis para não frustrar o usuário.
-- **Sessões Customizadas (Cramming)**: Modo de revisão rápida para todos os cartões, sem afetar o agendamento inteligente.
-
-### 📚 Organização e Gestão
-- **CRUD Completo**: Gerenciamento total de baralhos e flashcards.
-- **Hierarquia de Baralhos**: Organize seus estudos em sub-baralhos (ex: `Ciência > Física > Óptica`).
-- **Tags**: Adicione múltiplas tags aos baralhos para uma organização transversal.
-- **Busca Full-Text**: Encontre qualquer termo em todos os seus cartões com uma busca inteligente.
-- **Importação e Exportação**: Migre seus dados para dentro e para fora da plataforma usando o formato **CSV**.
-
-### 📊 Análise e Métricas
-- **Gráfico de Previsão (Forecast)**: Visualize a quantidade de cartões agendados para os próximos 30 dias.
-- **Heatmap de Consistência**: Um calendário visual que mostra sua frequência de estudos no último ano.
-- **Estatísticas de Retenção**: Meça sua taxa de acerto em cartões novos vs. maduros.
-
-### 🎮 Gamificação
-- **Ofensivas (Streaks)**: O sistema calcula e exibe seus dias consecutivos de estudo para mantê-lo motivado.
-- **Experiência (XP) e Níveis**: Ganhe pontos de experiência a cada revisão e suba de nível.
-
-### 🌐 Social e Ecossistema
-- **Sistema Multi-usuário**: Plataforma completa com registro e login, garantindo a privacidade total dos dados de cada usuário.
-- **Marketplace de Baralhos**: Publique seus baralhos para a comunidade e explore o conteúdo criado por outros usuários.
-- **Clonagem de Baralhos**: Adicione baralhos públicos à sua coleção com um único clique.
+* **Algoritmo de Repetição Espaçada (SM-2):**
+    * Cálculo inteligente do próximo intervalo de revisão com base na dificuldade do cartão e repetições consecutivas.
+    * *Status:* Implementado no Core Domain, totalmente encapsulado e testado.
+* **Gestão de Baralhos (Decks):**
+    * Criação de agrupamentos lógicos de flashcards.
+    * *Status:* Implementado através de Casos de Uso e persistência com PostgreSQL.
+* **Interface Web Interativa:**
+    * Telas construídas em Thymeleaf para operação do sistema.
+    * *Status:* Implementado o fluxo de criação de novos baralhos. A "mesa de estudos" para revisão está em desenvolvimento.
+* **Integração Contínua (CI):**
+    * Testes e builds automatizados na nuvem.
+    * *Status:* Implementado via GitHub Actions utilizando serviços efêmeros de banco de dados.
 
 ---
 
-## 🚀 Como Rodar o Projeto
+## ⚙️ Como Rodar o Projeto Localmente
 
-Siga estes passos para ter o ambiente de desenvolvimento rodando localmente.
+Siga estes passos para configurar e executar o Estudo Deck em sua máquina local.
 
 ### Pré-requisitos
-- JDK 17+
-- Apache Maven 3.8+
-- Docker e Docker Compose
 
-### Passos
-1.  **Clone o repositório:**
-    ```bash
-    git clone <URL_DO_SEU_REPOSITORIO>
-    cd estudodeck
-    ```
+* Java 17 JDK
+* Docker & Docker Compose
+* Apache Maven
 
-2.  **Inicie o Banco de Dados:**
-    Use o Docker Compose para subir o container do PostgreSQL.
-    ```bash
-    docker-compose up -d
-    ```
-    *Isso iniciará um banco de dados na porta `5432` com o nome `estudodeck`, usuário `postgres` e senha `sua_senha`.*
+### 1. Clonar o Repositório
 
-3.  **Verifique a Configuração:**
-    O arquivo `src/main/resources/application.properties` já está configurado para usar as credenciais acima. Se você as alterou no `docker-compose.yml`, ajuste-as aqui também.
-
-4.  **Execute a Aplicação:**
-    Use o Maven para compilar e rodar o projeto.
-    ```bash
-    mvn spring-boot:run
-    ```
-
-5.  **Acesse a Aplicação:**
-    - **Interface Web:** Abra seu navegador e acesse `http://localhost:8080/login`
-    - **Primeiro Acesso:** Use o link na página de login para se registrar.
-
----
-
-## 📡 Endpoints Principais (API)
-
-A aplicação expõe uma API RESTful sob o prefixo `/api`.
-
-| Método | Rota                                                 | Descrição                               |
-|--------|------------------------------------------------------|-------------------------------------------|
-| `POST` | `/api/decks`                                         | Cria um novo baralho.                     |
-| `PUT`  | `/api/decks/{id}`                                    | Atualiza o nome de um baralho.            |
-| `POST` | `/api/decks/{deckId}/flashcards`                     | Adiciona um novo flashcard a um baralho.  |
-| `POST` | `/api/decks/{deckId}/flashcards/{flashcardId}/review`| Submete o resultado de uma revisão (0-5). |
-| `POST` | `/api/decks/{deckId}/tags`                           | Adiciona uma tag a um baralho.            |
-| `DELETE`| `/api/decks/{deckId}`                                | Exclui um baralho e todos os seus cartões.|
-
----
-
-## 🏆 Demonstração de Boas Práticas
-
-Este projeto serve como um case de estudo na aplicação de práticas modernas de engenharia de software:
-
--   **SOLID:** Cada classe e método possui uma responsabilidade única, especialmente visível na separação de Casos de Uso.
--   **Clean Architecture & DDD:** O código é organizado em torno do domínio de negócio, não de frameworks.
--   **CQRS Simplificado:** Há uma clara separação entre "Comandos" (operações de escrita, como `ReviewFlashcardUseCase`) e "Queries" (operações de leitura otimizadas, como `GetReviewForecastUseCase`).
--   **Testes Abrangentes:** O projeto utiliza testes unitários para a lógica de domínio e testes de integração isolados para os fluxos da aplicação.
--   **Segurança:** A autenticação e autorização são gerenciadas pelo Spring Security, com armazenamento seguro de senhas.
+```sh
+git clone [URL_DO_SEU_REPOSITORIO]
+cd estudodeck
