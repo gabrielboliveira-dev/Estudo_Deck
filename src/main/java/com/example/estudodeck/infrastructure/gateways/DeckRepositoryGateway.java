@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -91,14 +93,19 @@ public class DeckRepositoryGateway implements DeckRepository {
         entity.setPublic(deck.isPublic());
 
         Set<TagJpaEntity> tagEntities = deck.getTags().stream().map(tag ->
-            springTagRepository.findByName(tag.getName()).orElseGet(() -> {
-                TagJpaEntity newTag = new TagJpaEntity();
-                newTag.setId(tag.getId());
-                newTag.setName(tag.getName());
-                return newTag;
-            })
+                springTagRepository.findByName(tag.getName()).orElseGet(() -> {
+                    TagJpaEntity newTag = new TagJpaEntity();
+                    newTag.setId(tag.getId());
+                    newTag.setName(tag.getName());
+                    return newTag;
+                })
         ).collect(Collectors.toSet());
-        entity.setTags(tagEntities);
+
+        if (entity.getTags() == null) {
+            entity.setTags(new HashSet<>());
+        }
+        entity.getTags().clear();
+        entity.getTags().addAll(tagEntities);
 
         List<FlashcardJpaEntity> cardEntities = deck.getCards().stream()
                 .map(card -> {
@@ -122,7 +129,12 @@ public class DeckRepositoryGateway implements DeckRepository {
                     return cardEntity;
                 }).collect(Collectors.toList());
 
-        entity.setCards(cardEntities);
+        if (entity.getCards() == null) {
+            entity.setCards(new ArrayList<>());
+        }
+        entity.getCards().clear();
+        entity.getCards().addAll(cardEntities);
+
         return entity;
     }
 

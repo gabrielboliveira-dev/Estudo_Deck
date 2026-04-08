@@ -1,0 +1,51 @@
+name: Estudo Deck - Continuous Integration
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    name: Build, Test and Analyze
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: admin
+          POSTGRES_DB: estudodeck
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar o Java (JDK 17)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Dar permissão de execução ao Maven Wrapper
+        run: chmod +x mvnw
+
+      - name: Rodar Testes Unitários e de Integração
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/estudodeck
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: admin
+        run: ./mvnw clean verify -B
+
+      - name: Construir Imagem Docker (Sanity Check)
+        run: docker build -t estudodeck:latest .
