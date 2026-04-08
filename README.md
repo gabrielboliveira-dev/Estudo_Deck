@@ -74,8 +74,57 @@ Siga estes passos para configurar e executar o Estudo Deck em sua máquina local
 * Docker & Docker Compose
 * Apache Maven
 
-### 1. Clonar o Repositório
 
-```sh
-git clone [URL_DO_SEU_REPOSITORIO]
-cd estudodeck
+### Passos
+1.  **Clone o repositório:**
+    ```bash
+    git clone <URL_DO_SEU_REPOSITORIO>
+    cd estudodeck
+    ```
+
+2.  **Inicie o Banco de Dados:**
+    Use o Docker Compose para subir o container do PostgreSQL.
+    ```bash
+    docker-compose up -d
+    ```
+    *Isso iniciará um banco de dados na porta `5432` com o nome `estudodeck`, usuário `postgres` e senha `sua_senha`.*
+
+3.  **Verifique a Configuração:**
+    O arquivo `src/main/resources/application.properties` já está configurado para usar as credenciais acima. Se você as alterou no `docker-compose.yml`, ajuste-as aqui também.
+
+4.  **Execute a Aplicação:**
+    Use o Maven para compilar e rodar o projeto.
+    ```bash
+    mvn spring-boot:run
+    ```
+
+5.  **Acesse a Aplicação:**
+  - **Interface Web:** Abra seu navegador e acesse `http://localhost:8080/login`
+  - **Primeiro Acesso:** Use o link na página de login para se registrar.
+
+---
+
+## 📡 Endpoints Principais (API)
+
+A aplicação expõe uma API RESTful sob o prefixo `/api`.
+
+| Método | Rota                                                 | Descrição                               |
+|--------|------------------------------------------------------|-------------------------------------------|
+| `POST` | `/api/decks`                                         | Cria um novo baralho.                     |
+| `PUT`  | `/api/decks/{id}`                                    | Atualiza o nome de um baralho.            |
+| `POST` | `/api/decks/{deckId}/flashcards`                     | Adiciona um novo flashcard a um baralho.  |
+| `POST` | `/api/decks/{deckId}/flashcards/{flashcardId}/review`| Submete o resultado de uma revisão (0-5). |
+| `POST` | `/api/decks/{deckId}/tags`                           | Adiciona uma tag a um baralho.            |
+| `DELETE`| `/api/decks/{deckId}`                                | Exclui um baralho e todos os seus cartões.|
+
+---
+
+## 🏆 Demonstração de Boas Práticas
+
+Este projeto serve como um case de estudo na aplicação de práticas modernas de engenharia de software:
+
+-   **SOLID:** Cada classe e método possui uma responsabilidade única, especialmente visível na separação de Casos de Uso.
+-   **Clean Architecture & DDD:** O código é organizado em torno do domínio de negócio, não de frameworks.
+-   **CQRS Simplificado:** Há uma clara separação entre "Comandos" (operações de escrita, como `ReviewFlashcardUseCase`) e "Queries" (operações de leitura otimizadas, como `GetReviewForecastUseCase`).
+-   **Testes Abrangentes:** O projeto utiliza testes unitários para a lógica de domínio e testes de integração isolados para os fluxos da aplicação.
+-   **Segurança:** A autenticação e autorização são gerenciadas pelo Spring Security, com armazenamento seguro de senhas.
