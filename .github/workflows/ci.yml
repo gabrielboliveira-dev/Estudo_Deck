@@ -37,4 +37,4 @@ jobs:
         run: ./mvnw clean verify -B
 
       - name: Construir Imagem Docker (Sanity Check)
-        run: docker build -t estudodeck:latest.
+        run: docker build -t estudodeck:latest .
