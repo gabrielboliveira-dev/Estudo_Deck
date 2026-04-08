@@ -7,12 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.UUID;
 
@@ -37,7 +35,7 @@ public class E2EUserFlowIntegrationTest {
 
     @BeforeEach
     void setup() {
-        userRepository.findByEmail("user@test.com").ifPresent(userRepository::delete);
+        userRepository.deleteAll();
         UserJpaEntity user = new UserJpaEntity();
         user.setId(UUID.randomUUID());
         user.setEmail("user@test.com");
@@ -48,7 +46,7 @@ public class E2EUserFlowIntegrationTest {
     @Test
     void shouldRegisterNewUserAndRedirectToLogin() throws Exception {
         mockMvc.perform(post("/register")
-                        .param("email", "newuser@test.com")
+                        .param("email", "e2eusuario@test.com")
                         .param("password", "newpassword")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
